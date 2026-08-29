@@ -10,10 +10,34 @@ const tasks = [
         completed: false,
         createdAt: "2026-08-29",
         attachmentPath: "/files/test.txt"
+    },
+    {
+        id: 2,
+        title: "Learn English",
+        completed: true,
+        createdAt: "2026-08-30",
+        attachmentPath: "/files/test.txt"
     }
 ];
 router.get("/", (req, res) => {
-    res.status(200).json(tasks);
+    const { completed, search } = req.query;
+
+    let result = tasks;
+
+    if (completed === "true") {
+        result = result.filter((task) => task.completed === true);
+    }
+
+    if (completed === "false") {
+        result = result.filter((task) => task.completed === false);
+    }
+
+    if (search) {
+        result = result.filter((task) =>
+            task.title.toLowerCase().includes(search.toLowerCase())
+        );
+    }
+    res.status(200).json(result);
 });
 
 router.post("/", (req, res) => {
