@@ -1,0 +1,2 @@
+While working on this project i realized that if two requests try to write to the JSON file at the same time they might overwrite each other's changes or cause data loss.
+At the beginning i didn't think much about how the data would be stored permanently i also learned that separating routes from the main server file makes the project cleaner and easier to manage Overall working on the CRUD, static files, filtering, and search helped me understand Express better.
