@@ -9,7 +9,7 @@ app.use(express.json());
 
 app.use("/api/tasks", taskRoutes);
 
-app.use("/uploads", express.static("uploads"));
+app.use("/files", express.static("uploads"));
 
 app.listen(PORT, () => {
     console.log(`server is running on PORT ${PORT}`);

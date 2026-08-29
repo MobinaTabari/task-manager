@@ -8,7 +8,8 @@ const tasks = [
         id: 1,
         title: "Learn Express",
         completed: false,
-        createdAt: "2026-08-29"
+        createdAt: "2026-08-29",
+        attachmentPath: "/files/test.txt"
     }
 ];
 router.get("/", (req, res) => {
@@ -27,7 +28,8 @@ router.post("/", (req, res) => {
         id : tasks.length + 1,
         title : title,
         completed : false,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        attachmentPath: "/files/test.txt"
     };
     tasks.push(newTask);
     res.status(201).json(newTask)
