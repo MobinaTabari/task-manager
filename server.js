@@ -1,4 +1,5 @@
 const express = require("express");
+// const validator = require("express-validator")
 const taskRoutes = require("./routes/taskRoutes");
 
 const app = express();
