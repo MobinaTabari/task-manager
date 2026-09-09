@@ -1,24 +1,21 @@
 
 const express = require("express");
+const uuid = require("uuid");
+const { format } = require("date-fns");
+const fs = require("fs");
+const path = require("path");
 
 const router = express.Router();
 
-const tasks = [
-    {
-        id: 1,
-        title: "Learn Express",
-        completed: false,
-        createdAt: "2026-08-29",
-        attachmentPath: "/files/test.txt"
-    },
-    {
-        id: 2,
-        title: "Learn English",
-        completed: true,
-        createdAt: "2026-08-30",
-        attachmentPath: "/files/test.txt"
-    }
-];
+const dataPath = path.join(__dirname, "../data/tasks.json");
+
+let tasks = JSON.parse(fs.readFileSync(dataPath, "utf-8"));
+
+const saveTasks = () => {
+    fs.writeFileSync(dataPath, JSON.stringify(tasks, null, 2));
+}
+
+
 router.get("/", (req, res) => {
     const { completed, search } = req.query;
 
@@ -47,22 +44,21 @@ router.post("/", (req, res) => {
             massage : "title is required"
         })
     }
-
     const newTask = {
-        id : tasks.length + 1,
-        title : title,
-        completed : false,
-        createdAt: new Date().toISOString(),
+        id: uuid.v4(),
+        title: title,
+        completed: false,
+        createdAt: format(new Date(), "yyyy-MM-dd"),
         attachmentPath: "/files/test.txt"
     };
     tasks.push(newTask);
+    saveTasks();
     res.status(201).json(newTask)
 });
 
 router.get("/:id", (req,res) => {
-    const taskId = Number(req.params.id);
 
-    const task = tasks.find((task) => task.id === taskId);
+    const task = tasks.find((task) => task.id === req.params.id);
     if (!task){
         return res.status(404).json({
             massage : "Task not found"
@@ -72,8 +68,7 @@ router.get("/:id", (req,res) => {
 });
 
 router.patch("/:id", (req,res) => { 
-    const taskId = Number(req.params.id);
-    const task = tasks.find((task) => task.id === taskId);
+    const task = tasks.find((task) => task.id === req.params.id);
     if (!task){
         return res.status(404).json({
             message : "Task not found"
@@ -87,12 +82,12 @@ router.patch("/:id", (req,res) => {
     if (completed !== undefined){
         task.completed = completed;
     }
+    saveTasks();
     res.status(200).json(task)
 })
 
 router.delete("/:id", (req, res) => {
-    const id = Number(req.params.id);
-    const taskIndex = tasks.findIndex((task) => task.id === id);
+    const taskIndex = tasks.findIndex((task) => task.id === req.params.id);
 
     if (taskIndex === -1) {
         return res.status(404).json({
@@ -100,11 +95,11 @@ router.delete("/:id", (req, res) => {
         });
     }
 
-    const deletedTask = tasks.splice(taskIndex, 1)[0];
+    tasks.splice(taskIndex,1);
+    saveTasks();
 
     res.status(200).json({
         message: "Task deleted successfully",
-        task: deletedTask,
     });
 });
 
